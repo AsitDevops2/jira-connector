@@ -1,7 +1,5 @@
 package com.jade.jira.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jade.jira.model.CreateIssueDTO;
 import com.jade.jira.model.CreateIssueRequest;
 import com.jade.jira.model.Response;
 import com.jade.jira.service.impl.ApiService;
@@ -37,6 +34,8 @@ public class ApiController {
 	public static final String CHECK_JIRA_CONNECTION = "/getConnection";
 	public static final String GET_TRANSITIONS = "/getTransitions/{issueIdOrKey}";
 	public static final String GET_ISSUE_TYPES = "/getAllComments/{issueIdOrKey}";
+	public static final String AUTHO = "authorization";
+	public static final String URL = "url";
 
 	Logger logger = LoggerFactory.getLogger(ApiController.class);
 
@@ -48,25 +47,24 @@ public class ApiController {
 	 */
 
 	@GetMapping(path = CHECK_JIRA_CONNECTION)
-	public Response<Map<String, String>> getJiraConnection(HttpServletRequest request) {
-		if(apiService.getConnectionFromJira(request.getHeader("authorization"), request.getHeader("url"))!=null){
-			return new Response<>(HttpStatus.OK.value(), "OK",
-					apiService.getConnectionFromJira(request.getHeader("authorization"), request.getHeader("url")));
-		}else {
-			return new Response<>(HttpStatus.BAD_REQUEST.value(), "Username or Password is invalid!",
-					apiService.getConnectionFromJira(request.getHeader("authorization"), request.getHeader("url")));
+	public Response getJiraConnection(HttpServletRequest request) {
+		if (apiService.getConnectionFromJira(request.getHeader(AUTHO), request.getHeader(URL)) != null) {
+			return new Response(HttpStatus.OK.value(), "OK",
+					apiService.getConnectionFromJira(request.getHeader(AUTHO), request.getHeader(URL)));
+		} else {
+			return new Response(HttpStatus.BAD_REQUEST.value(), "Username or Password is invalid!",
+					apiService.getConnectionFromJira(request.getHeader(AUTHO), request.getHeader(URL)));
 		}
-		
+
 	}
 
 	/**
 	 * user requested to create issue to jira
 	 */
 	@PostMapping(path = CREATE_ISSUE)
-	public Response<CreateIssueDTO> createIssue(@RequestBody CreateIssueRequest createIssueRequest,
-			HttpServletRequest request) {
-		return new Response<>(HttpStatus.OK.value(), "Issue created successfully.", apiService
-				.createIssue(createIssueRequest, request.getHeader("authorization"), request.getHeader("url")));
+	public Response createIssue(@RequestBody CreateIssueRequest createIssueRequest, HttpServletRequest request) {
+		return new Response(HttpStatus.OK.value(), "Issue created successfully.",
+				apiService.createIssue(createIssueRequest, request.getHeader(AUTHO), request.getHeader(URL)));
 
 	}
 
@@ -74,9 +72,9 @@ public class ApiController {
 	 * user requested to delete issue to jira
 	 */
 	@DeleteMapping(path = DELETE_ISSUE)
-	public Response<CreateIssueDTO> deleteIssue(@PathVariable("issueIdOrKey") String issueKey, HttpServletRequest request) {
-		return new Response<>(HttpStatus.OK.value(), "Issue deleted successfully.",
-				apiService.deleteIssue(request.getHeader("authorization"), request.getHeader("url"), issueKey));
+	public Response deleteIssue(@PathVariable("issueIdOrKey") String issueKey, HttpServletRequest request) {
+		return new Response(HttpStatus.OK.value(), "Issue deleted successfully.",
+				apiService.deleteIssue(request.getHeader(AUTHO), request.getHeader(URL), issueKey));
 
 	}
 
@@ -84,10 +82,9 @@ public class ApiController {
 	 * user requested to get transitions to jira
 	 */
 	@GetMapping(path = GET_TRANSITIONS)
-	public Response<Map<String, String>> transitions(@PathVariable("issueIdOrKey") String issueKey,
-			HttpServletRequest request) {
-		return new Response<>(HttpStatus.OK.value(), "transitions fetched successfully.",
-				apiService.getTransitionsByissueKey(request.getHeader("authorization"), request.getHeader("url"), issueKey));
+	public Response transitions(@PathVariable("issueIdOrKey") String issueKey, HttpServletRequest request) {
+		return new Response(HttpStatus.OK.value(), "transitions fetched successfully.",
+				apiService.getTransitionsByissueKey(request.getHeader(AUTHO), request.getHeader(URL), issueKey));
 
 	}
 }

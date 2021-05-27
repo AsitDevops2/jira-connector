@@ -11,21 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jade.jira.config.JiraConfig;
-import com.jade.jira.controller.ApiController;
 import com.jade.jira.model.CreateIssueRequest;
 import com.jade.jira.util.JiraRESTClient;
 
 @Service(value = "apiService")
 public class ApiServiceImpl implements ApiService {
-	Logger logger = LoggerFactory.getLogger(ApiController.class);
-	private JSONObject issueObj;
-
+	Logger logger = LoggerFactory.getLogger(ApiServiceImpl.class);
 	@Autowired
 	private JiraConfig jiraConfig;
 
 	@Override
 	public Map<String, String> getConnectionFromJira(String authorization, String url) {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		try {
 			JSONObject proj = new JSONObject();
 			String projects = JiraRESTClient.invokeGetMethod(authorization, url + jiraConfig.getProjectList());
@@ -48,6 +45,7 @@ public class ApiServiceImpl implements ApiService {
 
 	@Override
 	public JSONObject createIssue(CreateIssueRequest createIssueRequest, String authorization, String url) {
+		JSONObject issueObj = null;
 		try {
 			JSONObject issuetype = new JSONObject();
 			issuetype.put("name", createIssueRequest.getIssueType());
@@ -61,7 +59,7 @@ public class ApiServiceImpl implements ApiService {
 			fields.put("issuetype", issuetype);
 			JSONObject request = new JSONObject();
 			request.put("fields", fields);
-			String issue = JiraRESTClient.createBug(authorization, url + jiraConfig.getCreateIssue(),
+			String issue = JiraRESTClient.createIssue(authorization, url + jiraConfig.getCreateIssue(),
 					request.toString());
 			issueObj = new JSONObject(issue);
 
@@ -73,19 +71,19 @@ public class ApiServiceImpl implements ApiService {
 	}
 
 	@Override
-	public Boolean deleteIssue(String authorization, String url, String issueKey) {
+	public String deleteIssue(String authorization, String url, String issueKey) {
 		try {
 			return JiraRESTClient.invokeDeleteMethod(authorization,
 					url + jiraConfig.getDeleteIssue().replace("{issueIdOrKey}", issueKey));
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return "Server Error.";
 		}
 	}
 
 	@Override
 	public Map<String, String> getTransitionsByissueKey(String authorization, String url, String issueKey) {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		try {
 			String transitions = JiraRESTClient.invokeGetMethod(authorization,
 					url + jiraConfig.getTransitions().replace("{issueIdOrKey}", issueKey));

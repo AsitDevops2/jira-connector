@@ -1,6 +1,6 @@
 package com.jade.jira.model;
 
-public class Response<T> {
+public class Response{
 
     private int status;
     private String message;

@@ -1,117 +1,78 @@
 package com.jade.jira.util;
 
-import javax.naming.AuthenticationException;
+import java.util.Arrays;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class JiraRESTClient {
+
 	private JiraRESTClient() {
 
 	}
 
-	public static String invokeGetMethod(String auth, String url)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", auth).type("application/json")
-				.accept("application/json").get(ClientResponse.class);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
+	public static String invokeGetMethod(String auth, String url) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(JiraConstant.AUTHO, auth);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		if (response.getStatusCodeValue() == 401) {
+			return JiraConstant.INVALID_CREDENTIAL;
 		}
-		return response.getEntity(String.class);
+		return response.getBody();
 	}
 
-	public static String invokePostMethod(String auth, String url)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", auth).type("application/json")
-				.accept("application/json").get(ClientResponse.class);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		} else if (statusCode == 400) {
-			throw new AuthenticationException("Bad Request.");
+	public static String createIssue(String auth, String url, String data) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(JiraConstant.AUTHO, auth);
+
+		HttpEntity<String> entity = new HttpEntity<>(data, headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		if (response.getStatusCodeValue() == 401) {
+			return JiraConstant.INVALID_CREDENTIAL;
+		} else if (response.getStatusCodeValue() == 400) {
+			return JiraConstant.BAD_REQUEST;
 		}
-		return response.getEntity(String.class);
+		return response.getBody();
 	}
 
-	public static String createBug(String auth, String url, String data)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
-				.accept("application/json").post(ClientResponse.class, data);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		}
-		return response.getEntity(String.class);
-	}
+	public static String invokeDeleteMethod(String auth, String url) {
 
-	public static void postMethod(String auth, String url, String data)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
-				.accept("application/json").post(ClientResponse.class, data);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		} else if (statusCode == 400) {
-			throw new AuthenticationException("Bad Request.");
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(JiraConstant.AUTHO, auth);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+
+		switch (response.getStatusCodeValue()) {
+		case 204:
+			return "Successfully Deleted.";
+		case 401:
+			return JiraConstant.INVALID_CREDENTIAL;
+		case 403:
+			return "User does not have permission to delete the issue.";
+		case 404:
+			return "The issue is not found or the user does not have permission to view the issue.";
+		default:
+			return "Jira Connection error.";
 		}
 
-	}
-
-	public static void updatePutMethod(String auth, String url, String data)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
-				.accept("application/json").put(ClientResponse.class, data);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		} else if (statusCode == 400) {
-			throw new AuthenticationException("Bad Request.");
-		}
-
-	}
-
-	public static void invokePutMethod(String auth, String url, String data)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
-				.accept("application/json").put(ClientResponse.class, data);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		}
-	}
-
-	public static Boolean invokeDeleteMethod(String auth, String url)
-			throws AuthenticationException, ClientHandlerException {
-		Client client = Client.create();
-		WebResource webResource = client.resource(url);
-		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
-				.accept("application/json").delete(ClientResponse.class);
-		int statusCode = response.getStatus();
-		if (statusCode == 401) {
-			throw new AuthenticationException("Invalid Username or Password");
-		} else {
-			if (statusCode == 200) {
-				return true;
-			} else {
-				return false;
-
-			}
-		}
 	}
 
 }
