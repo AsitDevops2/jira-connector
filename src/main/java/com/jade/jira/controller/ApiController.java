@@ -22,12 +22,7 @@ import com.jade.jira.service.impl.ApiService;
 @RestController
 @RequestMapping("/api/v1/jira")
 public class ApiController {
-
-	public static final String CREATE_ISSUE = "/create-issue";
-	public static final String DELETE_ISSUE = "/delete-issue/{issueIdOrKey}";
 	public static final String CHECK_JIRA_CONNECTION = "/getConnection";
-	public static final String GET_TRANSITIONS = "/getTransitions/{issueIdOrKey}";
-	public static final String GET_ISSUE_TYPES = "/getAllComments/{issueIdOrKey}";
 	public static final String AUTHO = "authorization"; // Username:Password- with- Base64 Encode
 	public static final String URL = "url";
 
