@@ -13,14 +13,31 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "jira")
 public class JiraConfig {
 
-	private String projectList;
-
-	public String getProjectList() {
-		return projectList;
+	private String createIssue;
+	private String checkIssue;
+	private String deleteIssue;
+	public String getCreateIssue() {
+		return createIssue;
 	}
 
-	public void setProjectList(String projectList) {
-		this.projectList = projectList;
+	public void setCreateIssue(String createIssue) {
+		this.createIssue = createIssue;
+	}
+
+	public String getCheckIssue() {
+		return checkIssue;
+	}
+
+	public void setCheckIssue(String checkIssue) {
+		this.checkIssue = checkIssue;
+	}
+
+	public String getDeleteIssue() {
+		return deleteIssue;
+	}
+
+	public void setDeleteIssue(String deleteIssue) {
+		this.deleteIssue = deleteIssue;
 	}
 
 }
