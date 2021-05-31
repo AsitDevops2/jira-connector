@@ -35,9 +35,9 @@ public class ApiServiceImpl implements ApiService {
 			} else {
 				map.put(proj.getString("NA"), proj.getString("Create Project"));
 			}
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			map = null;
-			e.printStackTrace();
+			logger.error("Error: ", exception);
 		}
 		return map;
 
@@ -63,8 +63,8 @@ public class ApiServiceImpl implements ApiService {
 					request.toString());
 			issueObj = new JSONObject(issue);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception exception) {
+			logger.error("Error: ", exception);
 			return null;
 		}
 		return issueObj;
@@ -75,8 +75,9 @@ public class ApiServiceImpl implements ApiService {
 		try {
 			return JiraRESTClient.invokeDeleteMethod(authorization,
 					url + jiraConfig.getDeleteIssue().replace("{issueIdOrKey}", issueKey));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception exception) {
+			logger.error("Error: ", exception);
+
 			return "Server Error.";
 		}
 	}
@@ -93,8 +94,8 @@ public class ApiServiceImpl implements ApiService {
 				JSONObject trans = jsonArray.getJSONObject(i);
 				map.put(trans.getString("id"), trans.getString("name"));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception exception) {
+			logger.error("Error: ", exception);
 		}
 		return map;
 	}
