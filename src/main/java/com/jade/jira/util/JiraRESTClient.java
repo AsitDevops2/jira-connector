@@ -1,6 +1,6 @@
 package com.jade.jira.util;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,18 +18,14 @@ public class JiraRESTClient {
 	public static String invokeGetMethod(String auth, String url) {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.add(JiraConstant.AUTHO, auth);
-
 		HttpEntity<String> entity = new HttpEntity<>(headers);
-
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 		if (response.getStatusCodeValue() == 401) {
 			return JiraConstant.INVALID_CREDENTIAL;
 		}
 		return response.getBody();
 	}
-
 
 }
