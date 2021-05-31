@@ -37,8 +37,8 @@ public class ApiServiceImpl implements ApiService {
 			issueObj = new JSONObject(issue);
 
 		} catch (Exception exception) {
-			logger.error("Error: ", exception);
-			return null;
+            logger.error("Error while creating issue in jira: ", exception);
+            return null;
 		}
 		return issueObj;
 	}
@@ -49,8 +49,8 @@ public class ApiServiceImpl implements ApiService {
 			return JiraRESTClient.invokeDeleteMethod(authorization,
 					url + jiraConfig.getDeleteIssue().replace("{issueIdOrKey}", issueKey));
 		} catch (Exception exception) {
-			logger.error("Error: ", exception);
-			return "Server Error.";
+            logger.error("Error while deleting issue in jira: ", exception);
+            return "Server Error.";
 		}
 	}
 
