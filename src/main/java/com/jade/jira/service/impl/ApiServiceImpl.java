@@ -34,9 +34,9 @@ public class ApiServiceImpl implements ApiService {
 			} else {
 				map.put(proj.getString("NA"), proj.getString("Create Project"));
 			}
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			map = null;
-			e.printStackTrace();
+			logger.error("Error: ", exception);
 		}
 		return map;
 
