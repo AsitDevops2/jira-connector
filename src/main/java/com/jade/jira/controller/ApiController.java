@@ -25,10 +25,9 @@ import com.jade.jira.service.impl.ApiService;
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(path = ApiController.BASE_PATH)
+@RequestMapping("/api/v1/jira")
 public class ApiController {
 
-	public static final String BASE_PATH = "/api/v1/jira";
 	public static final String CREATE_ISSUE = "/create-issue";
 	public static final String DELETE_ISSUE = "/delete-issue/{issueIdOrKey}";
 	public static final String CHECK_JIRA_CONNECTION = "/getConnection";
