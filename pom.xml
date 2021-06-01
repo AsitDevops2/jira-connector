@@ -6,7 +6,7 @@
 	<groupId>com.jade.jira</groupId>
 	<artifactId>jira-connector</artifactId>
 	<version>1.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -22,6 +22,7 @@
 		 <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-tomcat</artifactId>
+	         <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -29,6 +30,21 @@
 			<version>20090211</version>
 		</dependency>
 	</dependencies>
+	
+	<profiles>
+			<profile>
+			<id>sonar</id>
+			<activation>
+			<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+			<!-- Optional URL to server. Default value is http://localhost:9000 -->
+			<sonar.host.url>
+			http://192.168.2.78:9005
+			</sonar.host.url>
+			</properties>
+			</profile>
+   </profiles>
 
 	<build>
 		<plugins>
